@@ -1,7 +1,6 @@
-import 'dart:developer';
-
-import 'package:ahmuseum/domain/blocs/collection_bloc.dart';
+import 'package:ahmuseum/domain/blocs/collection/collection_bloc.dart';
 import 'package:ahmuseum/domain/entities/art_object.dart';
+import 'package:ahmuseum/pages/details/details_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,17 +25,12 @@ class _CollectionScreenState extends State<CollectionScreen> {
 
     _pagingController.addPageRequestListener(
       (pageKey) {
-        log('--------- controller.pageRequestListener(pageKey: $pageKey');
-        final existedItems = _pagingController.itemList ?? [];
-        if (pageKey < existedItems.length) {
-          log('!!! pageKey is wrong !!!');
-          // return;
-        }
-
-        _bloc.add(GetCollection(
-          existedItems: existedItems,
-          offset: pageKey,
-        ));
+        _bloc.add(
+          GetCollection(
+            existedItems: _pagingController.itemList ?? [],
+            offset: pageKey,
+          ),
+        );
       },
     );
   }
@@ -59,14 +53,14 @@ class _CollectionScreenState extends State<CollectionScreen> {
           if (state is CollectionLoaded) {
             final newItems = state.newItems;
 
-            if (_pagingController.itemList != null) {
-              final existed = newItems
-                  .every((e) => _pagingController.itemList!.contains(e));
-              if (existed) {
-                log('existed');
-                return;
-              }
-            }
+            // if (_pagingController.itemList != null) {
+            //   final existed = newItems
+            //       .every((e) => _pagingController.itemList!.contains(e));
+            //   if (existed) {
+            //     log('existed');
+            //     return;
+            //   }
+            // }
 
             final existedItemsLength = _pagingController.itemList?.length ?? 0;
 
@@ -80,31 +74,25 @@ class _CollectionScreenState extends State<CollectionScreen> {
         },
         child: BlocBuilder<CollectionBloc, CollectionState>(
           builder: (context, state) {
-            final noItems = _pagingController.itemList == null ||
-                _pagingController.itemList!.isEmpty;
-
-            if (noItems && state is IsLoading && state.isBusy) {
-              return const Center(child: LinearProgressIndicator());
-            } else {
-              return noItems
-                  ? const Center(child: Text('List is empty'))
-                  : SafeArea(
-                      child: PagedListView<int, ArtObject>(
-                        pagingController: _pagingController,
-                        builderDelegate: PagedChildBuilderDelegate<ArtObject>(
-                          itemBuilder: (
-                            context,
-                            item,
-                            index,
-                          ) =>
-                              ArtWidget(
-                            index: index,
-                            item: item,
-                          ),
-                        ),
-                      ),
-                    );
-            }
+            return SafeArea(
+              child: PagedListView<int, ArtObject>(
+                pagingController: _pagingController,
+                builderDelegate: PagedChildBuilderDelegate<ArtObject>(
+                  firstPageProgressIndicatorBuilder: (context) =>
+                      state is Loading
+                          ? const Center(child: CircularProgressIndicator())
+                          : const SizedBox.shrink(),
+                  newPageProgressIndicatorBuilder: (context) => state is Loading
+                      ? const Center(child: CircularProgressIndicator())
+                      : const SizedBox.shrink(),
+                  noItemsFoundIndicatorBuilder: (context) => const Center(
+                    child: Text('No item found'),
+                  ),
+                  itemBuilder: (context, item, index) =>
+                      ArtWidget(index: index, item: item),
+                ),
+              ),
+            );
           },
         ),
       ),
@@ -135,27 +123,30 @@ class ArtWidget extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            Text(item.id),
-            Image.network(
-              item.headerImage.url,
-              cacheHeight: item.headerImage.height,
-              cacheWidth: item.headerImage.width,
-            ),
+            CachedNetworkImage(
+              imageUrl: item.headerImage.url,
+              height: 80,
+              progressIndicatorBuilder: (context, url, progress) {
+                return Center(
+                  child: LinearProgressIndicator(
+                    value: progress.progress,
+                  ),
+                );
+              },
+            )
           ],
         ),
         children: [
           Text(item.longTitle),
-          CachedNetworkImage(
-            imageUrl: item.webImage.url,
-            progressIndicatorBuilder: (context, url, progress) {
-              return Center(
-                child: SizedBox.square(
-                  child: LinearProgressIndicator(
-                    value: progress.progress,
-                  ),
-                ),
-              );
-            },
+          ElevatedButton(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    DetailsPage(objectNumber: item.objectNumber),
+              ),
+            ),
+            child: const Text('Go Details'),
           ),
         ],
       ),

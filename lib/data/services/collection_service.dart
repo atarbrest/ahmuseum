@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:ahmuseum/data/entities/art_object_dto.dart';
@@ -21,36 +20,34 @@ class CollectionService extends BaseService {
     required int page,
     required int itemsPerPage,
   }) async {
-    try {
-      const culture = 'en';
-      const apiKey = '0fiuZFh4';
+    final result = await executeRequest<Collection, CollectionDTO>(
+      invoker: () async {
+        final url = Uri.https(
+          host,
+          '/api/$culture/collection',
+          {
+            'key': apiKey,
+            'p': page.toString(),
+            'ps': itemsPerPage.toString(),
+          },
+        );
+        // final url = Uri.parse(
+        //     'https://$host/api/$culture/collection?key=$apiKey&p=${page.toString()}&ps=${itemsPerPage.toString()}');
 
-      final url = Uri.https(
-        'www.rijksmuseum.nl',
-        '/api/$culture/collection',
-        {
-          'key': apiKey,
-          'p': page.toString(),
-          'ps': itemsPerPage.toString(),
-        },
-      );
-
-      final response = await client.get(
-        url,
-        headers: {
-          HttpHeaders.contentTypeHeader: 'application/json',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final decodedResponse = jsonDecode(response.body);
+        final response = await client.get(
+          url,
+          headers: {
+            HttpHeaders.contentTypeHeader: 'application/json',
+          },
+        );
+        return response;
+      },
+      mapper: (value) {
+        final decodedResponse = jsonDecode(value);
         final result = CollectionDTO.fromJson(decodedResponse);
         return result.toModel();
-      }
-      throw Exception('Failed to load colllection');
-    } catch (ex) {
-      log(ex.toString());
-      throw Exception('Failed to load colllection');
-    }
+      },
+    );
+    return result;
   }
 }

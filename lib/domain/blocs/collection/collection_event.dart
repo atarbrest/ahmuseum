@@ -1,6 +1,6 @@
 part of 'collection_bloc.dart';
 
-abstract class CollectionEvent {}
+abstract class CollectionEvent extends BaseEvent {}
 
 class GetCollection extends CollectionEvent {
   final List<ArtObject> existedItems;

@@ -1,14 +1,10 @@
 part of 'collection_bloc.dart';
 
-abstract class CollectionState {}
+abstract class CollectionState extends BaseState {}
 
 class InitialCollectionState extends CollectionState {}
 
-class IsLoading extends CollectionState {
-  final bool isBusy;
-
-  IsLoading({required this.isBusy});
-}
+class Loading extends CollectionState {}
 
 class CollectionLoaded extends CollectionState {
   final List<ArtObject> newItems;
@@ -19,3 +15,5 @@ class CollectionLoaded extends CollectionState {
     required this.fullCount,
   });
 }
+
+class Error extends CollectionState {}
