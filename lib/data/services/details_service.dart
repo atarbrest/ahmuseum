@@ -2,13 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:ahmuseum/data/entities/collection_details_dto.dart';
-import 'package:ahmuseum/data/services/base_service.dart';
+import 'package:ahmuseum/data/services/i_details_service.dart';
 
 part 'details_service.mapping.dart';
 
-class DetailsService extends BaseService {
+class DetailsService extends IDetailsService {
   DetailsService();
 
+  @override
   Future<ArtObjectDetails> fetchArtDetails({
     required String objectNumber,
   }) async {

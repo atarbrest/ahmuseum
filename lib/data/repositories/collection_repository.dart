@@ -1,9 +1,9 @@
 import 'package:ahmuseum/data/repositories/i_collection_repository.dart';
-import 'package:ahmuseum/data/services/collection_service.dart';
+import 'package:ahmuseum/data/services/i_collection_service.dart';
 import 'package:ahmuseum/domain/entities/collection.dart';
 
 class CollectionRepository implements ICollectionRepository {
-  final CollectionService _collectionService;
+  final ICollectionService _collectionService;
 
   CollectionRepository(this._collectionService);
 

@@ -1,7 +1,11 @@
 import 'package:ahmuseum/data/repositories/collection_repository.dart';
 import 'package:ahmuseum/data/repositories/details_repository.dart';
+import 'package:ahmuseum/data/repositories/i_collection_repository.dart';
+import 'package:ahmuseum/data/repositories/i_details_repository.dart';
 import 'package:ahmuseum/data/services/collection_service.dart';
 import 'package:ahmuseum/data/services/details_service.dart';
+import 'package:ahmuseum/data/services/i_collection_service.dart';
+import 'package:ahmuseum/data/services/i_details_service.dart';
 import 'package:ahmuseum/domain/blocs/base/base_bloc.dart';
 import 'package:ahmuseum/domain/blocs/collection/collection_bloc.dart';
 import 'package:ahmuseum/domain/blocs/details/details_bloc.dart';
@@ -28,24 +32,24 @@ class ServiceLocator {
       ..registerSingleton<DialogService>(
         DialogService(),
       )
-      ..registerSingleton<CollectionService>(
+      ..registerSingleton<ICollectionService>(
         CollectionService(),
       )
-      ..registerSingleton<DetailsService>(
+      ..registerSingleton<IDetailsService>(
         DetailsService(),
       );
   }
 
   void _registerRepositories() {
     _getIt
-      ..registerSingleton<CollectionRepository>(
+      ..registerSingleton<ICollectionRepository>(
         CollectionRepository(
-          get<CollectionService>(),
+          get<ICollectionService>(),
         ),
       )
-      ..registerSingleton<DetailsRepository>(
+      ..registerSingleton<IDetailsRepository>(
         DetailsRepository(
-          get<DetailsService>(),
+          get<IDetailsService>(),
         ),
       );
   }
@@ -55,12 +59,12 @@ class ServiceLocator {
     _getIt
       ..registerFactory(
         () => CollectionBloc(
-          get<CollectionRepository>(),
+          get<ICollectionRepository>(),
         ),
       )
       ..registerFactory(
         () => DetailsBloc(
-          get<DetailsRepository>(),
+          get<IDetailsRepository>(),
         ),
       );
   }
