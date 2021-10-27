@@ -1,4 +1,4 @@
-import 'package:ahmuseum/data/entities/image_dto.dart';
+import 'package:ahmuseum/domain/entities/image.dart';
 
 class ArtObject {
   final String id;
@@ -6,8 +6,8 @@ class ArtObject {
   final String title;
   final String principalOrFirstMaker;
   final String longTitle;
-  final ImageDTO webImage;
-  final ImageDTO headerImage;
+  final Image webImage;
+  final Image headerImage;
 
   const ArtObject({
     required this.id,

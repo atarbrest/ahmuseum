@@ -18,8 +18,14 @@ extension on ArtObjectDTO {
       title: title,
       principalOrFirstMaker: principalOrFirstMaker,
       longTitle: longTitle,
-      webImage: webImage,
-      headerImage: headerImage,
+      webImage: webImage.toModel(),
+      headerImage: headerImage.toModel(),
     );
+  }
+}
+
+extension on ImageDTO {
+  Image toModel() {
+    return Image(url: url);
   }
 }

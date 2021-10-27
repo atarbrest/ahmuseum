@@ -3,9 +3,11 @@ import 'dart:io';
 
 import 'package:ahmuseum/data/entities/art_object_dto.dart';
 import 'package:ahmuseum/data/entities/collection_dto.dart';
+import 'package:ahmuseum/data/entities/image_dto.dart';
 import 'package:ahmuseum/data/services/base_service.dart';
 import 'package:ahmuseum/domain/entities/art_object.dart';
 import 'package:ahmuseum/domain/entities/collection.dart';
+import 'package:ahmuseum/domain/entities/image.dart';
 
 part 'collection_service.mapping.dart';
 
