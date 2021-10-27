@@ -3,20 +3,16 @@ import 'dart:io';
 
 import 'package:ahmuseum/data/entities/art_object_dto.dart';
 import 'package:ahmuseum/data/entities/collection_dto.dart';
-import 'package:ahmuseum/data/entities/count_facets_dto.dart';
-import 'package:ahmuseum/data/entities/links_dto.dart';
 import 'package:ahmuseum/data/services/base_service.dart';
 import 'package:ahmuseum/domain/entities/art_object.dart';
 import 'package:ahmuseum/domain/entities/collection.dart';
-import 'package:ahmuseum/domain/entities/count_facets.dart';
-import 'package:ahmuseum/domain/entities/links.dart';
 
 part 'collection_service.mapping.dart';
 
 class CollectionService extends BaseService {
   CollectionService();
 
-  Future<Collection> getCollection({
+  Future<Collection> fetchCollection({
     required int page,
     required int itemsPerPage,
   }) async {

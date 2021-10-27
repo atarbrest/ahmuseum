@@ -17,17 +17,14 @@ class CollectionBloc extends BaseBloc<CollectionEvent, CollectionState> {
     on<GetCollection>(_onGetCollection);
   }
 
-  FutureOr<void> _onGetCollection(
-      GetCollection event, Emitter<CollectionState> emit) async {
+  FutureOr<void> _onGetCollection(GetCollection event, Emitter<CollectionState> emit) async {
     emit(Loading());
 
     await makeExecution<Collection>(
       function: () async {
-        final currentPage = event.existedItems.isEmpty
-            ? 0
-            : event.existedItems.length ~/ kItemsPerPage;
+        final currentPage = event.existedItems.isEmpty ? 0 : event.existedItems.length ~/ kItemsPerPage;
 
-        final collection = await collectionRepository.getCollection(
+        final collection = await collectionRepository.fetchCollection(
           page: currentPage + 1,
           itemsPerPage: kItemsPerPage,
         );

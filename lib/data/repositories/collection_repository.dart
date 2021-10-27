@@ -6,11 +6,11 @@ class CollectionRepository {
 
   CollectionRepository(this._collectionService);
 
-  Future<Collection> getCollection({
+  Future<Collection> fetchCollection({
     required int page,
     required int itemsPerPage,
   }) async {
-    return _collectionService.getCollection(
+    return _collectionService.fetchCollection(
       page: page,
       itemsPerPage: itemsPerPage,
     );

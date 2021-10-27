@@ -1,6 +1,7 @@
 import 'package:ahmuseum/domain/blocs/collection/collection_bloc.dart';
 import 'package:ahmuseum/domain/entities/art_object.dart';
 import 'package:ahmuseum/pages/details/details_page.dart';
+import 'package:ahmuseum/test_keys.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,8 +15,7 @@ class CollectionScreen extends StatefulWidget {
 }
 
 class _CollectionScreenState extends State<CollectionScreen> {
-  final PagingController<int, ArtObject> _pagingController =
-      PagingController(firstPageKey: 0);
+  final PagingController<int, ArtObject> _pagingController = PagingController(firstPageKey: 0);
   final ScrollController _scrollController = ScrollController();
 
   late CollectionBloc _bloc;
@@ -68,27 +68,34 @@ class _CollectionScreenState extends State<CollectionScreen> {
           builder: (context, state) {
             return SafeArea(
               child: RefreshIndicator(
+                key: TestKeys.collectionRefreshIndicatorKey,
                 onRefresh: () async {
                   _pagingController.refresh();
                   _bloc.add(GetCollection());
                 },
                 child: PagedListView<int, ArtObject>(
+                  key: TestKeys.collectionListKey,
                   pagingController: _pagingController,
                   scrollController: _scrollController,
                   builderDelegate: PagedChildBuilderDelegate<ArtObject>(
-                    firstPageProgressIndicatorBuilder: (context) =>
-                        state is Loading
-                            ? const Center(child: CircularProgressIndicator())
-                            : const SizedBox.shrink(),
-                    newPageProgressIndicatorBuilder: (context) =>
-                        state is Loading
-                            ? const Center(child: CircularProgressIndicator())
-                            : const SizedBox.shrink(),
+                    firstPageProgressIndicatorBuilder: (context) => state is Loading
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              key: TestKeys.collectionInitialLoadingKey,
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                    newPageProgressIndicatorBuilder: (context) => state is Loading
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                            key: TestKeys.collectionNextPageLoadingKey,
+                          ))
+                        : const SizedBox.shrink(),
                     noItemsFoundIndicatorBuilder: (context) => const Center(
+                      key: TestKeys.collectionNoItemsKey,
                       child: Text('No item found'),
                     ),
-                    itemBuilder: (context, item, index) =>
-                        ArtWidget(index: index, item: item),
+                    itemBuilder: (context, item, index) => ArtWidget(index: index, item: item),
                   ),
                 ),
               ),
@@ -142,8 +149,7 @@ class ArtWidget extends StatelessWidget {
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    DetailsPage(objectNumber: item.objectNumber),
+                builder: (context) => DetailsPage(objectNumber: item.objectNumber),
               ),
             ),
             child: const Text('Go Details'),
