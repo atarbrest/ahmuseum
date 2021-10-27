@@ -1,3 +1,4 @@
 part of 'base_bloc.dart';
 
-abstract class BaseState {}
+@immutable
+abstract class BaseState extends Equatable {}

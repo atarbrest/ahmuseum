@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:ahmuseum/data/repositories/collection_repository.dart';
+import 'package:ahmuseum/data/repositories/i_collection_repository.dart';
 import 'package:ahmuseum/domain/blocs/base/base_bloc.dart';
 import 'package:ahmuseum/domain/entities/art_object.dart';
 import 'package:ahmuseum/domain/entities/collection.dart';
@@ -10,8 +10,7 @@ part 'collection_state.dart';
 part 'collection_event.dart';
 
 class CollectionBloc extends BaseBloc<CollectionEvent, CollectionState> {
-  final CollectionRepository collectionRepository;
-  static const kItemsPerPage = 10;
+  final ICollectionRepository collectionRepository;
 
   CollectionBloc(this.collectionRepository) : super(InitialCollectionState()) {
     on<GetCollection>(_onGetCollection);
@@ -22,11 +21,11 @@ class CollectionBloc extends BaseBloc<CollectionEvent, CollectionState> {
 
     await makeExecution<Collection>(
       function: () async {
-        final currentPage = event.existedItems.isEmpty ? 0 : event.existedItems.length ~/ kItemsPerPage;
+        final currentPage = event.existedItems.isEmpty ? 0 : event.existedItems.length ~/ event.limit;
 
         final collection = await collectionRepository.fetchCollection(
           page: currentPage + 1,
-          itemsPerPage: kItemsPerPage,
+          itemsPerPage: event.limit,
         );
 
         return collection;

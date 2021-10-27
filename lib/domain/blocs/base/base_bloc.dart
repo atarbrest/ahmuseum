@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:ahmuseum/data/services/base_service.dart';
 import 'package:ahmuseum/domain/services/dialog_service.dart';
 import 'package:ahmuseum/domain/view_models/error_view_model.dart';
+import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'base_event.dart';
@@ -10,8 +12,7 @@ part 'base_state.dart';
 
 late DialogService _dialogService;
 
-abstract class BaseBloc<E extends BaseEvent, S extends BaseState>
-    extends Bloc<E, S> {
+abstract class BaseBloc<E extends BaseEvent, S extends BaseState> extends Bloc<E, S> {
   static void initialize(DialogService dialogService) {
     _dialogService = dialogService;
   }
@@ -44,8 +45,7 @@ abstract class BaseBloc<E extends BaseEvent, S extends BaseState>
         onError: onError,
         errorViewModel: GeneralErrorViewModel(
           title: 'Not found',
-          description:
-              'Unfortunately selected item does not found. Try again later.',
+          description: 'Unfortunately selected item does not found. Try again later.',
           actionTitle: 'Ok',
         ),
       );
