@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:ahmuseum/domain/blocs/details/details_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';

@@ -16,6 +16,7 @@ class CollectionScreen extends StatefulWidget {
 class _CollectionScreenState extends State<CollectionScreen> {
   final PagingController<int, ArtObject> _pagingController =
       PagingController(firstPageKey: 0);
+  final ScrollController _scrollController = ScrollController();
 
   late CollectionBloc _bloc;
 
@@ -38,6 +39,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
   @override
   void dispose() {
     _pagingController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -52,44 +54,42 @@ class _CollectionScreenState extends State<CollectionScreen> {
         listener: (context, state) {
           if (state is CollectionLoaded) {
             final newItems = state.newItems;
-
-            // if (_pagingController.itemList != null) {
-            //   final existed = newItems
-            //       .every((e) => _pagingController.itemList!.contains(e));
-            //   if (existed) {
-            //     log('existed');
-            //     return;
-            //   }
-            // }
-
             final existedItemsLength = _pagingController.itemList?.length ?? 0;
 
-            final nextPageItem = existedItemsLength + newItems.length + 1;
-            if (nextPageItem > state.fullCount) {
+            final nextPageItemKey = existedItemsLength + newItems.length + 1;
+            if (nextPageItemKey > state.fullCount) {
               _pagingController.appendLastPage(newItems);
             } else {
-              _pagingController.appendPage(newItems, nextPageItem);
+              _pagingController.appendPage(newItems, nextPageItemKey);
             }
           }
         },
         child: BlocBuilder<CollectionBloc, CollectionState>(
           builder: (context, state) {
             return SafeArea(
-              child: PagedListView<int, ArtObject>(
-                pagingController: _pagingController,
-                builderDelegate: PagedChildBuilderDelegate<ArtObject>(
-                  firstPageProgressIndicatorBuilder: (context) =>
-                      state is Loading
-                          ? const Center(child: CircularProgressIndicator())
-                          : const SizedBox.shrink(),
-                  newPageProgressIndicatorBuilder: (context) => state is Loading
-                      ? const Center(child: CircularProgressIndicator())
-                      : const SizedBox.shrink(),
-                  noItemsFoundIndicatorBuilder: (context) => const Center(
-                    child: Text('No item found'),
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  _pagingController.refresh();
+                  _bloc.add(GetCollection());
+                },
+                child: PagedListView<int, ArtObject>(
+                  pagingController: _pagingController,
+                  scrollController: _scrollController,
+                  builderDelegate: PagedChildBuilderDelegate<ArtObject>(
+                    firstPageProgressIndicatorBuilder: (context) =>
+                        state is Loading
+                            ? const Center(child: CircularProgressIndicator())
+                            : const SizedBox.shrink(),
+                    newPageProgressIndicatorBuilder: (context) =>
+                        state is Loading
+                            ? const Center(child: CircularProgressIndicator())
+                            : const SizedBox.shrink(),
+                    noItemsFoundIndicatorBuilder: (context) => const Center(
+                      child: Text('No item found'),
+                    ),
+                    itemBuilder: (context, item, index) =>
+                        ArtWidget(index: index, item: item),
                   ),
-                  itemBuilder: (context, item, index) =>
-                      ArtWidget(index: index, item: item),
                 ),
               ),
             );

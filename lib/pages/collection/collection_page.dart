@@ -6,10 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CollectionPage extends StatefulWidget {
   const CollectionPage({
-    required this.title,
     Key? key,
   }) : super(key: key);
-  final String title;
 
   @override
   State<CollectionPage> createState() => _CollectionPageState();
@@ -19,8 +17,7 @@ class _CollectionPageState extends State<CollectionPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) =>
-          ServiceLocator.I.get<CollectionBloc>()..add(GetCollection()),
+      create: (_) => ServiceLocator.I.get<CollectionBloc>(),
       child: const CollectionScreen(),
     );
   }

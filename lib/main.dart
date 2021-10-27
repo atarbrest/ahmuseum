@@ -5,5 +5,5 @@ import 'package:flutter/material.dart';
 Future<void> main() async {
   await ServiceLocator.I.init();
 
-  runApp(const MyApp());
+  runApp(const App());
 }
